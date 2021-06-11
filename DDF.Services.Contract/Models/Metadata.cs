@@ -1,23 +1,73 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace DDF.Services.Contract.Models
 {
-    public class Metadata
+    [XmlRoot(ElementName = "Lookup")]
+    public class Lookup
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public long ID { get; set; }
-        public DateTime LastUpdated { get; set; }
-        public long ListingID { get; set; }
+        [XmlElement(ElementName = "MetadataEntryID")]
+        public int MetadataEntryID { get; set; }
+
+        [XmlElement(ElementName = "LookupName")]
+        public string LookupName { get; set; }
+
+        [XmlElement(ElementName = "VisibleName")]
+        public string VisibleName { get; set; }
+
+        [XmlElement(ElementName = "Version")]
+        public string Version { get; set; }
+
+        [XmlElement(ElementName = "Date")]
+        public string Date { get; set; }
     }
 
-    public class MetadataRequestArgument
+    [XmlRoot(ElementName = "METADATA-LOOKUP")]
+    public class MetadataLookup
     {
-        public string Type { get; set; }
-        public string Format { get; set; }
-        public string ID { get; set; }
-        public string Culture { get; set; }
+
+        [XmlElement(ElementName = "Lookup")]
+        public List<Lookup> Lookup { get; set; }
+
+        [XmlAttribute(AttributeName = "Resource")]
+        public string Resource { get; set; }
+
+        [XmlAttribute(AttributeName = "Date")]
+        public string Date { get; set; }
+
+        [XmlAttribute(AttributeName = "Version")]
+        public string Version { get; set; }
+
+        [XmlText]
+        public string Text { get; set; }
     }
+
+    [XmlRoot(ElementName = "METADATA")]
+    public class Metadata
+    {
+
+        [XmlElement(ElementName = "METADATA-LOOKUP")]
+        public MetadataLookup MetadataLookup { get; set; }
+    }
+
+    [XmlRoot(ElementName = "RETS")]
+    public class MetadataRETS
+    {
+
+        [XmlElement(ElementName = "METADATA")]
+        public Metadata Metadata { get; set; }
+
+        [XmlAttribute(AttributeName = "ReplyCode")]
+        public int ReplyCode { get; set; }
+
+        [XmlAttribute(AttributeName = "ReplyText")]
+        public string ReplyText { get; set; }
+
+        [XmlText]
+        public string Text { get; set; }
+    }
+
+
 }

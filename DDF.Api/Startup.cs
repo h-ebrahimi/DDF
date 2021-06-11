@@ -1,15 +1,15 @@
 using DDF.Common.GeneralSettings;
 using DDF.Services.Contract.Infrastructure;
 using DDF.Services.Contract.Persistence;
+using DDF.Services.Contract.Usecases;
 using DDF.Services.Default.Infrastructure;
 using DDF.Services.Default.Persistence;
+using DDF.Services.Default.Usecases;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Net;
-using System.Net.Http;
 
 namespace DDF
 {
@@ -31,19 +31,10 @@ namespace DDF
             services.Configure<DDFSettings>(Configuration.GetSection("DDFSettings"));
             services.Configure<MongodbSettings>(Configuration.GetSection("MongodbSettings"));
 
-            var username = Configuration.GetValue<string>("DDFSettings:LoginSettings:Username");
-            var password = Configuration.GetValue<string>("DDFSettings:LoginSettings:Username");
-            var baseUrl = Configuration.GetValue<string>("DDFSettings:BaseUrl");
-            var credCache = new CredentialCache();
-            credCache.Add(new System.Uri(baseUrl), "Digest", new NetworkCredential(username, password, baseUrl));
-            services.AddHttpClient("DDF").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                Credentials = credCache
-            });
-
             services.AddScoped<IMetadataService, MetadataService>();
             services.AddScoped<IMetadataTransactionService, MetadataTransactionService>();
-            services.AddScoped<ILoginTransactionService, LoginTransactionService>();
+            services.AddSingleton<ILoginTransactionService, LoginTransactionService>();
+            services.AddScoped<IMetadataTransactionUsecaseService, MetadataTransactionUsecaseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
